@@ -20,27 +20,6 @@ class Figure:
         a.append(c)
         a.append("endel")
         return a
-    def getshapenumber(self):
-        self.shapenum=""
-        a=getDiff(self.layer_content)
-        for i in range(1,len(a)):
-            prev=a[i-1]
-            curr=a[i]
-            print(prev,curr)
-            if(prev[0]>curr[0]):
-                print("case1")
-                self.shapenum+="1"
-            elif(prev[0]<curr[0]):
-                print("case3")
-                self.shapenum+="3"
-            elif(prev[1]>curr[1]):
-                print("case0")
-                self.shapenum+="0"
-            else:
-                print("case2")
-                self.shapenum+="2"
-
-
 
 
 
@@ -78,10 +57,20 @@ class MyClass:
             # print(fig.layer_content)
             self.objects.append(fig)
             fig.get_layer_content()
-            fig.getshapenumber()
 
 
-
+def getscaled(a):
+    scalehalf=[]
+    scaleonenhalf=[]
+    for i in range(len(a)):
+        c=[]
+        d=[]
+        for j in range(2):
+            c.append(int(a[i][j]*1.5))
+            d.append(int(a[i][j]*0.5))
+        scaleonenhalf.append(c)
+        scalehalf.append(d)
+    return scaleonenhalf,scalehalf
     
 
 def readfile(loc):
@@ -92,7 +81,7 @@ def readfile(loc):
     return all_lines
 
 def write_to_output(content):
-    with open(r"Results/Milestone4.txt","a+") as file:
+    with open(r"Results/Milestone6.txt","a+") as file:
         for each in content:
             file.write(f"{each}\n")
 
@@ -107,79 +96,45 @@ def getDiff(a):
         # print(c)
     return c,d
 
-def getDiffbtwn2(a,b):
-    c=[]
-    d=[]
-    for i in range(1,len(a)):
-        x1,y1=a[i][0],a[i][1]
-        x2,y2=b[i][0],b[i][1]
-        # print(x,y)
-        c.append([abs(x2-x1),abs(y2-y1)])
-        d.append([abs(y2-y1),abs(x2-x1)])
-        # print(c)
-    return c,d
-
 footer=["endlib","endstr"]
-src=MyClass(r"Milestone_Input/Milestone 4/Source.txt")
+src=MyClass(r"Milestone_Input/Milestone 6/Source.txt")
 src.get_header()
 src.get_objects()
 
-poi=MyClass(r"Milestone_Input/Milestone 4/POI.txt")
+poi=MyClass(r"Milestone_Input/Milestone 6/POI.txt")
 poi.get_header()
 print(poi.header)
 poi.get_objects()
-shape_tofind=[]
-for each in poi.objects:
-    shape_tofind.append(each.layer_content)
+
+shape_tofind=poi.objects[0].layer_content
+shape,shape2=getDiff(shape_tofind)
+print(getscaled(shape))
+print("hi")
+s_onenhalf,s_half=getscaled(shape)
+allshapestofind=[]
+allshapestofind.append(shape)
+allshapestofind.append(s_half)
+allshapestofind.append(s_onenhalf)
+# print(allshapestofind)
 all_shapes=[]
 for each in src.objects:
     all_shapes.append(each.layer_content)
-print(shape_tofind)
-
-# found_idx1=[]
-# found_idx2=[]
+# print(shape_tofind)
 found_idx=[]
-for j in range(len(shape_tofind)):
-    shape,shape2=getDiff(shape_tofind[j])
-    reqshapenum=poi.objects[j].shapenum
-    print(reqshapenum)
+for each in allshapestofind:
+    print(each)
+    
     for i  in range(len(all_shapes)):
         test_shape1,test_shape2=getDiff(all_shapes[i])
         # print(test_shape1)
-        if(sorted(test_shape1)== sorted(shape) or sorted(test_shape2) == sorted(shape) ):
-            # print("Match")
-            # print(i)
+        if(sorted(test_shape1)==sorted(each) or sorted(test_shape2)==sorted(each)):
+            print("Match")
+            print(i)
             found_idx.append(i)
-            # if(j==0):
-            #     found_idx1.append(i)
-            # else:
-            #     found_idx2.append(i)
-
 print(len(found_idx))
-# res=[]
-# diff_test=getDiffbtwn2(shape_tofind[1],shape_tofind[0])
-# for i in range(0,len(found_idx)):
-#     for j in range(len(found_idx)):
-#         diff_act=getDiffbtwn2(all_shapes[i],all_shapes[j])
-#         if(diff_act==diff_test):
-#             res.append(all_shapes[i],all_shapes[j])
 
-# print(len(res))
+write_to_output(poi.header)
+for each in found_idx:
+    write_to_output(src.objects[each].get_layer_content())
 
-# test=[]
-# for i in range(0,len(found_idx)-1):
-#     if(found_idx[i]+1==found_idx[i+1]):
-#         test.append(found_idx[i])
-#         test.append(found_idx[i+1])
-#         i+=1
-    
-# test=set(test)
-
-# print(len(test))
-
-# print(len(found_idx1),len(found_idx2))
-# write_to_output(poi.header)
-# for each in found_idx:
-#     write_to_output(src.objects[each].get_layer_content())
-
-# write_to_output(footer)
+write_to_output(footer)

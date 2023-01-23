@@ -26,19 +26,19 @@ class Figure:
         for i in range(1,len(a)):
             prev=a[i-1]
             curr=a[i]
-            print(prev,curr)
-            if(prev[0]>curr[0]):
-                print("case1")
-                self.shapenum+="1"
-            elif(prev[0]<curr[0]):
-                print("case3")
-                self.shapenum+="3"
-            elif(prev[1]>curr[1]):
-                print("case0")
-                self.shapenum+="0"
-            else:
-                print("case2")
-                self.shapenum+="2"
+            # print(prev,curr)
+            # if(prev[0]>curr[0]):
+            #     print("case1")
+            #     self.shapenum+="1"
+            # elif(prev[0]<curr[0]):
+            #     print("case3")
+            #     self.shapenum+="3"
+            # elif(prev[1]>curr[1]):
+            #     print("case0")
+            #     self.shapenum+="0"
+            # else:
+            #     print("case2")
+            #     self.shapenum+="2"
 
 
 
@@ -110,7 +110,8 @@ def getDiff(a):
 def getDiffbtwn2(a,b):
     c=[]
     d=[]
-    for i in range(1,len(a)):
+    
+    for i in range(0,len(a)):
         x1,y1=a[i][0],a[i][1]
         x2,y2=b[i][0],b[i][1]
         # print(x,y)
@@ -136,26 +137,41 @@ for each in src.objects:
     all_shapes.append(each.layer_content)
 print(shape_tofind)
 
-# found_idx1=[]
-# found_idx2=[]
-found_idx=[]
+a,b=getDiffbtwn2(shape_tofind[0],shape_tofind[1])
+print(a)
+found_idx1=[]
+found_idx2=[]
+# found_idx=[]
 for j in range(len(shape_tofind)):
     shape,shape2=getDiff(shape_tofind[j])
     reqshapenum=poi.objects[j].shapenum
-    print(reqshapenum)
+    # print(reqshapenum)
     for i  in range(len(all_shapes)):
         test_shape1,test_shape2=getDiff(all_shapes[i])
         # print(test_shape1)
         if(sorted(test_shape1)== sorted(shape) or sorted(test_shape2) == sorted(shape) ):
             # print("Match")
             # print(i)
-            found_idx.append(i)
-            # if(j==0):
-            #     found_idx1.append(i)
-            # else:
-            #     found_idx2.append(i)
+            # found_idx.append(i)
+            if(j==0):
+                found_idx1.append(i)
+            else:
+                found_idx2.append(i)
 
-print(len(found_idx))
+final=[]
+for i in range(len(found_idx1)):
+    for j in range(len(found_idx2)):
+        c,d=getDiffbtwn2(getDiff(all_shapes[found_idx1[i]])[0],getDiff(all_shapes[found_idx2[j]])[0])
+        # print(c)
+        if(sorted(c)==sorted(a) or sorted(d)==sorted(a) ):
+        # if(c==a or d==a):
+            final.append(i)
+            final.append(j)
+
+print(f"final {len(final)}")
+
+
+# print(len(found_idx))
 # res=[]
 # diff_test=getDiffbtwn2(shape_tofind[1],shape_tofind[0])
 # for i in range(0,len(found_idx)):
@@ -178,8 +194,8 @@ print(len(found_idx))
 # print(len(test))
 
 # print(len(found_idx1),len(found_idx2))
-# write_to_output(poi.header)
-# for each in found_idx:
-#     write_to_output(src.objects[each].get_layer_content())
+write_to_output(poi.header)
+for each in final:
+    write_to_output(src.objects[each].get_layer_content())
 
-# write_to_output(footer)
+write_to_output(footer)
